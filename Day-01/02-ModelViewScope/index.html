@@ -18,6 +18,7 @@
     </style>
     <script src="jquery-1.11.2.js"></script>
     <script src="angular.js"></script>
+
     <script>
     //Model
     function SalaryCalculator(){
@@ -35,77 +36,14 @@
     }
     
     //View
+
+
     $(document).ready(function(){
             
         angular.bootstrap(document.body, []);
         window.scope = angular.element(document.body).scope();
-       
         scope.calculator = new SalaryCalculator();
-        
-        $("*[app-model]").each(function(index, element){
-            var $element = $(element),
-                model = $element.attr("app-model");
-            $element.change(function(){
-                var self = this;
-                scope.$apply(function(){
-                    var expr = model + '=' + self.value;
-                    scope.$eval(expr);
-                });
-            });
-            scope.$watch(model, function(newValue, oldValue){
-                $element.val( newValue);
-            })
-        });
-        
 
-
-       /* $("#txtHra").change(function(){
-            var self = this;
-            scope.$apply(function(){
-                scope.calculator.hra = self.value;
-            });
-        });
-        scope.$watch("calculator.hra", function(newValue, oldValue){
-            $("#txtHra").val( newValue)
-        })
-        
-        $("#txtDa").change(function(){
-            var self = this;
-            scope.$apply(function(){
-                scope.calculator.da = self.value;
-            });
-        });
-        scope.$watch("calculator.da", function(newValue, oldValue){
-            $("#txtDa").val( newValue)
-        })
-        
-        $("#rangeTax").change(function(){
-            var self = this;
-            scope.$apply(function(){
-                scope.calculator.tax = self.value;
-            });
-        });
-        scope.$watch("calculator.tax", function(newValue, oldValue){
-            $("#rangeTax").val( newValue)
-        })*/
-        
-        $("*[app-click]").each(function(index, element){
-            var $element = $(element),
-                expr = $element.attr("app-click");
-            
-            $element.click(function(){
-                scope.$apply(function(){
-                    scope.$eval(expr);
-                });
-            });
-        });
-        
-        scope.$watch("calculator.salary", function(newValue, oldValue){
-            $("#divResult").html(newValue);
-        })
-        scope.$watch("calculator.tax", function(newValue, oldValue){
-            $("#spanTax").html(newValue);
-        });
     });
     </script>
 </head>
@@ -114,26 +52,26 @@
         <div class="content">
             <div class="field">
                 <label for="">Basic :</label>
-                <input type="text" id="txtBasic" app-model="calculator.basic">
+                <input type="text" id="txtBasic" ng-model="calculator.basic">
             </div>
             <div class="field">
                 <label for="">HRA :</label>
-                <input type="text" id="txtHra" app-model="calculator.hra">
+                <input type="text" id="txtHra" ng-model="calculator.hra">
             </div>
             <div class="field">
                 <label for="">DA :</label>
-                <input type="text" id="txtDa" app-model="calculator.da">
+                <input type="text" id="txtDa" ng-model="calculator.da">
             </div>
             <div class="field">
                 <label for="">Tax :</label>
-                <input type="range" id="rangeTax" min="0" max="30" value="0" app-model="calculator.tax">
-                <span id="spanTax" app-bind="calculator.tax">[Tax]</span>
+                <input type="range" id="rangeTax" min="0" max="30" value="0" ng-model="calculator.tax">
+                <span id="spanTax" ng-bind="calculator.tax">[Tax]</span>
             </div>
             <div class="field">
-                <input type="button" value="Calculate" id="btnCalculate" app-click="calculator.calculate()">
+                <input type="button" value="Calculate" id="btnCalculate" ng-click="calculator.calculate()">
             </div>
             <div class="field">
-                <div id="divResult" app-bind="calculator.salary">[Salary]</div>
+                <div id="divResult" ng-bind="calculator.salary">[Salary]</div>
             </div>
         </div>
     
