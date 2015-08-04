@@ -105,32 +105,43 @@
             return Bug;
         });
 
-        bugTrackerApp.factory("bugService", function($http, Bug, $q){
+        bugTrackerApp.provider("bugService", function(){
+            console.log("outer factory invoked");
+            var _baseUrl = "http://localhost:3000/bugs";
             return {
-                getAll : function(){
-                    var defered = $q.defer();
+                setUrl : function(url){
+                    _baseUrl = url;
+                },
+                $get : function($http, Bug, $q){
+                    console.log("inner factory invoked");
+                        return {
+                            getAll : function(){
+                                var defered = $q.defer();
 
-                    var promise = $http.get("http://localhost:3000/bugs");
-                    promise.then(function(response){
-                        var result = response.data.map(function(bugData){
-                           return new Bug(bugData);
-                        });
-                        defered.resolve(result);
-                    });
+                                var promise = $http.get(_baseUrl);
+                                promise.then(function(response){
+                                    var result = response.data.map(function(bugData){
+                                       return new Bug(bugData);
+                                    });
+                                    defered.resolve(result);
+                                });
 
-                    return defered.promise;
-                }
+                                return defered.promise;
+                            }
+                        }
+                    }
             }
         });
-        bugTrackerApp.value("appname", "myapp");
-        bugTrackerApp.config(function(){
 
+        bugTrackerApp.config(function(bugServiceProvider){
+            console.log("bugServiceProvider = ", bugServiceProvider);
+            bugServiceProvider.setUrl("http://localhost:4000/bugs");
             console.log("bugTracker being configured");
         });
 
-        bugTrackerApp.run(function(appname){
+        bugTrackerApp.run(function(bugService){
             console.log("bugTracker being run");
-            console.log("appname = ", appname);
+            console.log("bugService = ", bugService);
         })
 
         bugTrackerApp.controller("bugsController", function($scope, Bug, bugService){
