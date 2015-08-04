@@ -105,7 +105,11 @@
             return Bug;
         });
 
-        bugTrackerApp.provider("bugService", function(){
+        bugTrackerApp.factory("dataService", function(){
+            return {}
+        });
+
+        bugTrackerApp.provider("bugService", function($httpProvider){
             console.log("outer factory invoked");
             var _baseUrl = "http://localhost:3000/bugs";
             return {
@@ -133,7 +137,8 @@
             }
         });
 
-        bugTrackerApp.config(function(bugServiceProvider){
+        bugTrackerApp.config(function(bugServiceProvider, dataServiceProvider){
+            console.log("dataServiceProvider = ", dataServiceProvider);
             console.log("bugServiceProvider = ", bugServiceProvider);
             bugServiceProvider.setUrl("http://localhost:4000/bugs");
             console.log("bugTracker being configured");
