@@ -105,16 +105,15 @@
             return Bug;
         });
 
-        bugTrackerApp.controller("bugsController", function($scope, Bug){
+        bugTrackerApp.controller("bugsController", function($scope, Bug, $http){
 
-            console.log(arguments.length);
+            $scope.bugs = [];
 
-            $scope.bugs = [
-                new Bug({name : "Server communication failure", isClosed : false, createdAt : new Date(2015, 7, 1)}),
-                new Bug({name : "Stack overflow error", isClosed : false, createdAt : new Date(2015, 7, 2)}),
-                new Bug({name : "Object reference not found", isClosed : false, createdAt : new Date(2015, 7, 3)}),
-                new Bug({name : "User authentication failure", isClosed : false, createdAt : new Date(2015, 7, 4)}),
-            ];
+            var promise = $http.get("http://localhost:3000/bugs");
+            promise.then(function(response){
+                console.log(response.data);
+                $scope.bugs = response.data;
+            });
 
             $scope.addBug = function(newBugName){
                 var nBug = new Bug({
