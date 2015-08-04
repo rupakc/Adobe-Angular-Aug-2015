@@ -30,10 +30,52 @@
         div {
             margin-bottom: 10px;
         }
+         ol{
+            width: 60%;
+        }
+        li{
+            list-style: none;
+            margin-bottom: 10px;
+            border : 2px solid gray;
+            background-color: #e7e7e7;
+            padding : 5px;
+            border-radius: 5px;
+        }
+        li .bugName{
+            font-weight: bold;
+            font-size: 19pt;
+            cursor: pointer;
+
+        }
+        li .timeStamp{
+            font-size: small;
+            font-style: italic;
+        }
     </style>
     <script src="angular.js"></script>
+    <script src="moment.js"></script>
     <script>
-        var bugTrackerApp = angular.module("bugTrackerApp", []);
+
+        var utils = angular.module("utils", []);
+        utils.value("defaultTrimLength", 30);
+
+        utils.filter("trimText", function(defaultTrimLength){
+            return function(data, trimLength){
+                trimLength = trimLength || defaultTrimLength;
+                return data.length < trimLength
+                    ? data : data.substr(0,trimLength)+'...';
+            }
+        });
+
+        utils.value("momentApi", moment);
+
+        utils.filter("toMoment", function(momentApi){
+            return function(data){
+                return momentApi(data).fromNow();
+            }
+        });
+
+        var bugTrackerApp = angular.module("bugTrackerApp", ["utils"]);
 
         bugTrackerApp.value("appDefaults", {
                 url : "http://localhost/blah",
@@ -102,15 +144,6 @@
             }
         });
 
-        bugTrackerApp.value("defaultTrimLength", 30);
-
-        bugTrackerApp.filter("trimText", function(defaultTrimLength){
-            return function(data, trimLength){
-                trimLength = trimLength || defaultTrimLength;
-                return data.length < trimLength
-                    ? data : data.substr(0,trimLength)+'...';
-            }
-        });
 
 
 
@@ -143,37 +176,12 @@
             <input type="button" value="Add Bug" ng-click="addBug(newBugName)">
             <input type="button" value="Remove Closed" ng-click="removeClosed()">
             <ol>
-
-                <style>
-                    ol{
-                        width: 60%;
-                    }
-                    li{
-                        list-style: none;
-                        margin-bottom: 10px;
-                        border : 2px solid gray;
-                        background-color: #e7e7e7;
-                        padding : 5px;
-                        border-radius: 5px;
-                    }
-                    li .bugName{
-                        font-weight: bold;
-                        font-size: 19pt;
-                        cursor: pointer;
-
-                    }
-                    li .timeStamp{
-                        font-size: small;
-                        font-style: italic;
-                    }
-                </style>
-
                <li ng-repeat="bug in bugs | filter:searchBug | orderBy:sortBug:sortOrder" >
                    <div class="bugName" ng-click="toggle(bug)" ng-class="{closed : bug.isClosed}">
                        {{bug.name}}
                    </div>
                    <div class="timeStamp">
-                       {{bug.createdAt}}
+                       {{bug.createdAt | toMoment}}
                    </div>
                </li>
             </ol>
